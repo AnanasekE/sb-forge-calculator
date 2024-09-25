@@ -1,0 +1,14 @@
+[
+  {
+    "itemId": "DRILL_MOTOR",
+    "timeHours": 30,
+    "hotmRequirement": 3,
+    "items": {
+      "ENCHANTED_IRON_BLOCK": 1,
+      "ENCHANTED_REDSTONE_BLOCK": 3,
+      "GOLDEN_PLATE": 1,
+      "TREASURITE": 10,
+      "REFINED_DIAMOND": 1
+    }
+  }
+]

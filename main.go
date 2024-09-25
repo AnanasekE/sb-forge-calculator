@@ -43,20 +43,39 @@ type QuickStatus struct {
 	BuyOrders      int     `json:"buyOrders"`
 }
 
+type Recipe struct {
+	ItemID          string         `json:"itemId"`
+	TimeHours       int            `json:"timeHours"`
+	HotmRequirement int            `json:"hotmRequirement"`
+	Items           map[string]int `json:"items"`
+}
+
+// hypixel api url: https://api.hypixel.net/v2/skyblock/bazaar
+
 func main() {
 	productsFile, err := os.Open("products.json")
 	if err != nil {
-		fmt.Println("BORKED LOADING JSON")
+		return
 	}
 	productsJson, _ := io.ReadAll(productsFile)
 
 	var marketData MarketData
-	json.Unmarshal(productsJson, &marketData)
+	err = json.Unmarshal(productsJson, &marketData)
+	if err != nil {
+		return
+	}
 
 	forgeRecipesFile, err := os.Open("forge_recipes.json")
 	if err != nil {
-		fmt.Println("BORKED LOADING FORGE RECIPES")
+		return
 	}
 	forgeRecipesJson, _ := io.ReadAll(forgeRecipesFile)
-	// TODO add recipe struct
+
+	var recipes []Recipe
+	err = json.Unmarshal(forgeRecipesJson, &recipes)
+	if err != nil {
+		return
+	}
+
+	fmt.Println(marketData.Products)
 }
