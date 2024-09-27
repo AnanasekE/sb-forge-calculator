@@ -69,7 +69,7 @@ func main() {
 	marketData := loadMarketData()
 	recipes := loadRecipes()
 
-	if time.Now().Unix()-marketData.LastUpdated > 60*10 {
+	if time.Now().Unix()-marketData.LastUpdated > 600 {
 		downloadBazaarPrices()
 		marketData = loadMarketData()
 	}
