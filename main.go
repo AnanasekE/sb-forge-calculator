@@ -2,12 +2,18 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/jedib0t/go-pretty/v6/table"
+	"golang.org/x/text/language"
+	_ "golang.org/x/text/language"
+	"golang.org/x/text/message"
+	_ "golang.org/x/text/message"
 	"io"
 	"log"
 	"os"
 )
 
-// Root struct
+// MarketData Root struct
 type MarketData struct {
 	Success     bool               `json:"success"`
 	LastUpdated int64              `json:"lastUpdated"`
@@ -47,6 +53,9 @@ type Recipe struct {
 	TimeHours       int            `json:"timeHours"`
 	HotmRequirement int            `json:"hotmRequirement"`
 	Items           map[string]int `json:"items"`
+	ProfitPerHour   int
+	ProfitTotal     int
+	Cost            int
 }
 
 // hypixel api url: https://api.hypixel.net/v2/skyblock/bazaar
@@ -77,12 +86,29 @@ func main() {
 	}
 
 	var found bool
+	var newRecipes []Recipe
 	for _, recipe := range recipes {
 		found = false
 		for _, product := range marketData.Products {
 			if recipe.ItemID == product.ProductID {
-				//log.Printf("Item Found %s", recipe.ItemID)
 				found = true
+
+				cost := 0
+				for itemName, itemAmount := range recipe.Items {
+					for _, prod := range marketData.Products {
+						if itemName == prod.ProductID {
+							cost += int(prod.QuickStatus.BuyPrice) * itemAmount
+						}
+					}
+				}
+				recipe.Cost = cost
+
+				recipe.ProfitPerHour = (int(product.QuickStatus.BuyPrice) / recipe.TimeHours) - cost/recipe.TimeHours
+				recipe.ProfitTotal = int(product.QuickStatus.BuyPrice) - cost
+				newRecipes = append(
+					newRecipes,
+					recipe,
+				)
 				break
 			}
 		}
@@ -90,4 +116,29 @@ func main() {
 			log.Printf("Item Not Found %s", recipe.ItemID)
 		}
 	}
+	slots := 6
+	p := message.NewPrinter(language.English)
+	writer := table.NewWriter()
+	writer.AppendHeader(table.Row{"ItemID",
+		"Cost",
+		"Profit Per Hour",
+		"Profit",
+		"Time",
+		fmt.Sprintf("Profit for %s slots per hour", fmt.Sprint(slots)),
+		"Total Cost",
+		"Total Profit"})
+	for _, recipe := range newRecipes {
+		row := table.Row{recipe.ItemID,
+			p.Sprint(recipe.Cost),
+			p.Sprint(recipe.ProfitPerHour),
+			p.Sprint(recipe.ProfitTotal),
+			recipe.TimeHours,
+			p.Sprint(recipe.ProfitPerHour * slots),
+			p.Sprint(recipe.Cost * slots),
+			p.Sprint(recipe.ProfitTotal * slots)}
+
+		writer.AppendRow(row)
+	}
+	fmt.Println(writer.Render())
+
 }
