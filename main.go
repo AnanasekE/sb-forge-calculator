@@ -65,11 +65,10 @@ type Recipe struct {
 
 func main() {
 	// time.Now().Unix() - UNIX TIMESTAMP
-
 	marketData := loadMarketData()
 	recipes := loadRecipes()
 
-	if time.Now().Unix()-marketData.LastUpdated > 600 {
+	if time.Now().Unix()-(marketData.LastUpdated/1000) > 600 {
 		downloadBazaarPrices()
 		marketData = loadMarketData()
 	}
@@ -179,7 +178,9 @@ func loadMarketData() MarketData {
 
 	productsFile, err := os.Open("products.json")
 	if err != nil {
-		log.Fatalf("Error loading json: %s", err.Error())
+		//log.Fatalf("Error loading json: %s", err.Error())
+		log.Println("Error loading json, downloading a new one")
+		downloadBazaarPrices()
 	}
 	productsJson, _ := io.ReadAll(productsFile)
 
