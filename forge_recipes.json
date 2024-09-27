@@ -1,6 +1,6 @@
 [
   {
-    "itemId": "DRILL_MOTOR",
+    "itemId": "DRILL_ENGINE",
     "timeHours": 30,
     "hotmRequirement": 3,
     "items": {
@@ -9,6 +9,77 @@
       "GOLDEN_PLATE": 1,
       "TREASURITE": 10,
       "REFINED_DIAMOND": 1
+    }
+  },
+  {
+    "itemId": "FUEL_TANK",
+    "timeHours": 10,
+    "hotmRequirement": 2,
+    "items": {
+      "ENCHANTED_BLOCK_OF_COAL": 2
+    }
+  },
+  {
+    "itemId": "GEMSTONE_MIXTURE",
+    "timeHours": 4,
+    "hotmRequirement": 4,
+    "items": {
+      "FINE_JADE_GEMSTONE": 4,
+      "FINE_AMBER_GEMSTONE": 4,
+      "FINE_AMETHYST_GEMSTONE": 4,
+      "FINE_SAPPHIRE_GEMSTONE": 4,
+      "SLUDGE_JUICE": 320
+    }
+  },
+  {
+    "itemId": "GLACITE_AMALGAMATION",
+    "timeHours": 4,
+    "hotmRequirement": 7,
+    "items": {
+      "ENCHANTED_GLACITE": 256,
+      "FINE_ONYX_GEMSTONE": 4,
+      "FINE_CITRINE_GEMSTONE": 4,
+      "FINE_PERIDOT_GEMSTONE": 4,
+      "FINE_AQUAMARINE_GEMSTONE": 4
+    }
+  },
+  {
+    "itemId": "GOLDEN_PLATE",
+    "timeHours": 6,
+    "hotmRequirement": 3,
+    "items": {
+      "ENCHANTED_GOLD_BLOCK": 2,
+      "GLACITE_JEWEL": 5,
+      "REFINED_DIAMOND": 1
+    }
+  },
+  {
+    "itemId": "MITHRIL_PLATE",
+    "timeHours": 18,
+    "hotmRequirement": 3,
+    "items": {
+      "REFINED_MITHRIL": 5,
+      "GOLDEN_PLATE": 1,
+      "ENCHANTED_IRON_BLOCK": 1,
+      "REFINED_TITANIUM": 1
+    }
+  },
+  {
+    "itemId": "TUNGSTEN_PLATE",
+    "timeHours": 3,
+    "hotmRequirement": 7,
+    "items": {
+      "REFINED_TUNGSTEN": 4,
+      "GLACITE_AMALGAMATION": 1
+    }
+  },
+  {
+    "itemId": "UMBER_PLATE",
+    "timeHours": 3,
+    "hotmRequirement": 7,
+    "items": {
+      "REFINED_UMBER": 4,
+      "GLACITE_AMALGAMATION": 1
     }
   }
 ]

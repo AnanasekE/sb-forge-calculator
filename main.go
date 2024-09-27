@@ -2,16 +2,15 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
+	"log"
 	"os"
-	"time"
 )
 
 // Root struct
 type MarketData struct {
 	Success     bool               `json:"success"`
-	LastUpdated time.Time          `json:"lastUpdated"`
+	LastUpdated int64              `json:"lastUpdated"`
 	Products    map[string]Product `json:"products"`
 }
 
@@ -55,27 +54,40 @@ type Recipe struct {
 func main() {
 	productsFile, err := os.Open("products.json")
 	if err != nil {
-		return
+		log.Fatalf("Error loading json: %s", err.Error())
 	}
 	productsJson, _ := io.ReadAll(productsFile)
 
 	var marketData MarketData
 	err = json.Unmarshal(productsJson, &marketData)
 	if err != nil {
-		return
+		log.Fatalf("Error parsing json: %s", err.Error())
 	}
 
 	forgeRecipesFile, err := os.Open("forge_recipes.json")
 	if err != nil {
-		return
+		log.Fatalf("Error loading json: %s", err.Error())
 	}
 	forgeRecipesJson, _ := io.ReadAll(forgeRecipesFile)
 
 	var recipes []Recipe
 	err = json.Unmarshal(forgeRecipesJson, &recipes)
 	if err != nil {
-		return
+		log.Fatalf("Error parsing json: %s", err.Error())
 	}
 
-	fmt.Println(marketData.Products)
+	var found bool
+	for _, recipe := range recipes {
+		found = false
+		for _, product := range marketData.Products {
+			if recipe.ItemID == product.ProductID {
+				//log.Printf("Item Found %s", recipe.ItemID)
+				found = true
+				break
+			}
+		}
+		if found == false {
+			log.Printf("Item Not Found %s", recipe.ItemID)
+		}
+	}
 }
