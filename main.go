@@ -10,7 +10,10 @@ import (
 	_ "golang.org/x/text/message"
 	"io"
 	"log"
+	"net/http"
 	"os"
+	"strconv"
+	"time"
 )
 
 // MarketData Root struct
@@ -61,28 +64,14 @@ type Recipe struct {
 // hypixel api url: https://api.hypixel.net/v2/skyblock/bazaar
 
 func main() {
-	productsFile, err := os.Open("products.json")
-	if err != nil {
-		log.Fatalf("Error loading json: %s", err.Error())
-	}
-	productsJson, _ := io.ReadAll(productsFile)
+	// time.Now().Unix() - UNIX TIMESTAMP
 
-	var marketData MarketData
-	err = json.Unmarshal(productsJson, &marketData)
-	if err != nil {
-		log.Fatalf("Error parsing json: %s", err.Error())
-	}
+	marketData := loadMarketData()
+	recipes := loadRecipes()
 
-	forgeRecipesFile, err := os.Open("forge_recipes.json")
-	if err != nil {
-		log.Fatalf("Error loading json: %s", err.Error())
-	}
-	forgeRecipesJson, _ := io.ReadAll(forgeRecipesFile)
-
-	var recipes []Recipe
-	err = json.Unmarshal(forgeRecipesJson, &recipes)
-	if err != nil {
-		log.Fatalf("Error parsing json: %s", err.Error())
+	if time.Now().Unix()-marketData.LastUpdated > 60*10 {
+		downloadBazaarPrices()
+		marketData = loadMarketData()
 	}
 
 	var found bool
@@ -116,7 +105,29 @@ func main() {
 			log.Printf("Item Not Found %s", recipe.ItemID)
 		}
 	}
-	slots := 6
+
+	fmt.Println("Enter your HOTM Level: ")
+	var levelStr string
+	_, err := fmt.Scan(&levelStr)
+	if err != nil {
+		log.Fatalf("Error while scanning for HOTM Level: %s", err)
+	}
+	hotmLevel, err := strconv.Atoi(levelStr)
+	if err != nil {
+		log.Fatalf("Error while parsing HOTM Level: %s", err)
+	}
+
+	var slotsStr string
+	fmt.Println("Enter how many forge slots you have: ")
+	_, err = fmt.Scan(&slotsStr)
+	if err != nil {
+		log.Fatalf("Error while scanning for forge slots: %s", err)
+	}
+	slots, err := strconv.Atoi(slotsStr)
+	if err != nil {
+		log.Fatalf("Error while parsing HOTM Level: %s", err)
+	}
+
 	p := message.NewPrinter(language.English)
 	writer := table.NewWriter()
 	writer.AppendHeader(table.Row{"ItemID",
@@ -126,8 +137,12 @@ func main() {
 		"Time",
 		fmt.Sprintf("Profit for %s slots per hour", fmt.Sprint(slots)),
 		"Total Cost",
-		"Total Profit"})
+		"Total Profit",
+		"HOTM Req"})
 	for _, recipe := range newRecipes {
+		if recipe.HotmRequirement > hotmLevel {
+			continue
+		}
 		row := table.Row{recipe.ItemID,
 			p.Sprint(recipe.Cost),
 			p.Sprint(recipe.ProfitPerHour),
@@ -135,10 +150,63 @@ func main() {
 			recipe.TimeHours,
 			p.Sprint(recipe.ProfitPerHour * slots),
 			p.Sprint(recipe.Cost * slots),
-			p.Sprint(recipe.ProfitTotal * slots)}
+			p.Sprint(recipe.ProfitTotal * slots),
+			recipe.HotmRequirement}
 
 		writer.AppendRow(row)
 	}
+	//writer.SortBy([]table.SortBy{{Name: "Profit Per Hour", Mode: table.Dsc}})
 	fmt.Println(writer.Render())
 
+}
+
+func loadRecipes() []Recipe {
+	forgeRecipesFile, err := os.Open("forge_recipes.json")
+	if err != nil {
+		log.Fatalf("Error loading json: %s", err.Error())
+	}
+	forgeRecipesJson, _ := io.ReadAll(forgeRecipesFile)
+
+	var recipes []Recipe
+	err = json.Unmarshal(forgeRecipesJson, &recipes)
+	if err != nil {
+		log.Fatalf("Error parsing json: %s", err.Error())
+	}
+	return recipes
+}
+
+func loadMarketData() MarketData {
+
+	productsFile, err := os.Open("products.json")
+	if err != nil {
+		log.Fatalf("Error loading json: %s", err.Error())
+	}
+	productsJson, _ := io.ReadAll(productsFile)
+
+	var marketData MarketData
+	err = json.Unmarshal(productsJson, &marketData)
+	if err != nil {
+		log.Fatalf("Error parsing json: %s", err.Error())
+	}
+	return marketData
+}
+
+func downloadBazaarPrices() {
+	response, err := http.Get("https://api.hypixel.net/v2/skyblock/bazaar")
+	if err != nil {
+		log.Fatalf("Error while fetching bz prices: %s", err)
+	}
+	defer response.Body.Close()
+
+	data, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Fatalf("Error while reading bz prices: %s", err)
+	}
+
+	err = os.WriteFile("products.json", data, os.ModePerm)
+	if err != nil {
+		log.Fatalf("Error while saving bz prices file: %s", err)
+	}
+
+	log.Println("Bazaar prices downloaded and saved successfully!")
 }

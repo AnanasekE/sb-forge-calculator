@@ -37,10 +37,10 @@
     "hotmRequirement": 7,
     "items": {
       "ENCHANTED_GLACITE": 256,
-      "FINE_ONYX_GEMSTONE": 4,
-      "FINE_CITRINE_GEMSTONE": 4,
-      "FINE_PERIDOT_GEMSTONE": 4,
-      "FINE_AQUAMARINE_GEMSTONE": 4
+      "FINE_ONYX_GEM": 4,
+      "FINE_CITRINE_GEM": 4,
+      "FINE_PERIDOT_GEM": 4,
+      "FINE_AQUAMARINE_GEM": 4
     }
   },
   {
