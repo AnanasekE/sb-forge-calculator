@@ -131,13 +131,14 @@ func main() {
 	writer := table.NewWriter()
 	writer.AppendHeader(table.Row{"ItemID",
 		"Cost",
-		"Profit Per Hour",
+		"PROFIT PER HOUR",
 		"Profit",
 		"Time",
 		fmt.Sprintf("Profit for %s slots per hour", fmt.Sprint(slots)),
 		"Total Cost",
 		"Total Profit",
-		"HOTM Req"})
+		"HOTM Req",
+		"sorting"})
 	for _, recipe := range newRecipes {
 		if recipe.HotmRequirement > hotmLevel {
 			continue
@@ -150,11 +151,14 @@ func main() {
 			p.Sprint(recipe.ProfitPerHour * slots),
 			p.Sprint(recipe.Cost * slots),
 			p.Sprint(recipe.ProfitTotal * slots),
-			recipe.HotmRequirement}
+			recipe.HotmRequirement,
+			recipe.ProfitPerHour,
+		}
 
 		writer.AppendRow(row)
 	}
-	//writer.SortBy([]table.SortBy{{Name: "Profit Per Hour", Mode: table.Dsc}})
+	writer.SetStyle(table.StyleDefault)
+	writer.SortBy([]table.SortBy{{Number: 10, Mode: table.DscNumericAlpha}})
 	fmt.Println(writer.Render())
 
 }

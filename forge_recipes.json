@@ -81,5 +81,13 @@
       "REFINED_UMBER": 4,
       "GLACITE_AMALGAMATION": 1
     }
+  },
+  {
+    "itemId": "REFINED_UMBER",
+    "timeHours": 1,
+    "hotmRequirement": 7,
+    "items": {
+      "ENCHANTED_UMBER": 160
+    }
   }
 ]
