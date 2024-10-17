@@ -162,7 +162,7 @@ func main() {
 	fmt.Println(writer.Render())
 
 	fmt.Println("Press ENTER to end program")
-	_, _ = fmt.Scan()
+	_, _ = fmt.Scanln()
 }
 
 func loadRecipes() []Recipe {
