@@ -27,7 +27,7 @@ jobs:
       run: cp ./forge_recipes.json ./bin/forge_recipes.json
 
     - name: Build Linux
-      run: go build -v -o ./sb_forge_calc_linux
+      run: go build -v -o ./bin/sb_forge_calc_linux
 
     - name: Build Windows
       run: env GOOS=windows GOARCH=amd64 go build -v -o ./bin/sb_forge_calc_win.exe
