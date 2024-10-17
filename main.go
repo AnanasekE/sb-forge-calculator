@@ -161,6 +161,8 @@ func main() {
 	writer.SortBy([]table.SortBy{{Number: 10, Mode: table.DscNumericAlpha}})
 	fmt.Println(writer.Render())
 
+	fmt.Println("Press ENTER to end program")
+	_, _ = fmt.Scan()
 }
 
 func loadRecipes() []Recipe {
